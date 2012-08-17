@@ -171,6 +171,8 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 						pck >> m_heroList[i]->direction;
 					}
 				}
+
+				cout<<"Update"<<endl;
 			}break;
 	}
 };
