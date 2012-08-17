@@ -4,6 +4,9 @@
 #include <ParabolaCore/GameCore.h>
 #include <ParabolaCore/Sprite.h>
 #include <ParabolaCore/NetworkClient.h>
+#include <ParabolaCore/ScopedFile.h>
+#include <ParabolaCore/TextStream.h>
+
 using namespace pE;
 
 #include <vector>
@@ -28,6 +31,9 @@ public:
 
 	/// Called when there is new data to read
 	void onClientData(NetworkClient* , NetworkPacket* packet);
+
+	/// Called when the client connected
+	void onClientConnect(NetworkClient* client);
 
 	/// Rendering
 	Renderer *m_renderer;

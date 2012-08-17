@@ -8,6 +8,7 @@ ClientApp::ClientApp(){
 	setWindowTitle("Moba Client");
 
 	m_client.onDataReceived.connect(MAKE_SLOT_LOCAL(ClientApp, onClientData));
+	m_client.onConnected.connect(MAKE_SLOT_LOCAL(ClientApp, onClientConnect));
 };
 
 /// When game is created
@@ -52,6 +53,22 @@ void ClientApp::onUpdate(Time time){
 	m_client.update(10);
 };
 
+
+/// Called when the client connected
+void ClientApp::onClientConnect(NetworkClient* client){
+	String account_name = "Grimshaw";
+	ScopedFile fp("../../account.txt", IODevice::TextRead);
+	if(fp.canRead()){
+		TextStream ts(&fp);
+		account_name = ts.getLine();
+	}
+
+	cout<<"Account: "<<account_name<<endl;
+
+	Packet p;
+	
+	client->send(p);
+};
 
 /// Called when there is new data to read
 void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
