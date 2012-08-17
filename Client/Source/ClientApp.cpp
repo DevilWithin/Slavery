@@ -101,8 +101,8 @@ void ClientApp::onRender(){
 void ClientApp::onUpdate(Time time){
 	m_client.update(10);
 
-	if(m_myHero){
-		m_myHero->position += m_myHero->direction * m_myHero->movementSpeed * time.asSeconds();
+	for(unsigned int i = 0; i < m_heroList.size(); i++){
+		m_heroList[i]->position += m_heroList[i]->direction * m_heroList[i]->movementSpeed * time.asSeconds();
 	}
 };
 
