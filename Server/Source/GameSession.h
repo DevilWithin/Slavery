@@ -13,9 +13,21 @@ using namespace pE;
 
 namespace Client{
 	enum ClientGeneratedPacket{
-		AUTH_REQUEST = 0
+		AUTH_REQUEST = 0,
+		TEST,
+		HERO_DIRECTION_REQUEST
 	};
 }
+
+namespace Server{
+	enum ServerGeneratedPacket{
+		HERO_INFO = 0,
+		HERO_IDENTITY,
+		HERO_DIRECTION_UPDATE
+	};
+};
+
+class HeroNetworkController;
 
 class GameSession{
 public:
@@ -46,11 +58,23 @@ public:
 	/// Players ingame
 	int playerCount();
 
+	/// Get hero by index
+	Hero* getHero(int index);
+
 	/// Kills the player if it is found
 	void killPlayer(String nick);
 
 	/// Finds a player by nickname, in both teams
 	Hero* findPlayerByNickname(String nick);
+
+	/// Finds a player by its id
+	Hero* findPlayerById(Int16 id);
+
+	/// Number of network controlled heros
+	int getNetworkPlayerCount();
+
+	/// Get a network controller by index
+	HeroNetworkController* getNetworkPlayer(int index);
 
 	void logPlayer(String name);
 
@@ -74,6 +98,8 @@ public:
 
 	/// Each Hero must have a controller, AI or Network, otherwise it is just a dummy
 	std::map<Hero*, HeroController*> m_heroControllers;
+	std::vector<HeroNetworkController*> m_networkControllers;
+	int m_networkedControllers;
 };
 
 #endif

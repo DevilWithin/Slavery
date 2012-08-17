@@ -14,5 +14,5 @@ HeroNetworkController::HeroNetworkController(NetworkServerPeer* peer, Hero* hero
 
 /// Called when the peer has data
 void HeroNetworkController::handleMessage(NetworkPacket* packet){
-	hero->moveDirection.x = 1;
+
 };

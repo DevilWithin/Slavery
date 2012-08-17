@@ -6,6 +6,7 @@
 #include <ParabolaCore/NetworkClient.h>
 #include <ParabolaCore/ScopedFile.h>
 #include <ParabolaCore/TextStream.h>
+#include <ParabolaCore/Text.h>
 
 using namespace pE;
 
@@ -14,9 +15,19 @@ using namespace pE;
 
 namespace Client{
 	enum ClientGeneratedPacket{
-		AUTH_REQUEST = 0
+		AUTH_REQUEST = 0,
+		TEST,
+		HERO_DIRECTION_REQUEST
 	};
 }
+namespace Server{
+	enum ServerGeneratedPacket{
+		HERO_INFO = 0,
+		HERO_IDENTITY,
+		HERO_DIRECTION_UPDATE
+	};
+};
+
 
 class ClientApp : public GameCore{
 public:

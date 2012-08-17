@@ -6,7 +6,7 @@ using namespace std;
 
 GameSession::GameSession(){
 	onGame = false;
-
+	m_networkedControllers = 0;
 	m_server.onClientConnect.connect(MAKE_SLOT_LOCAL(GameSession, clientConnect));
 	m_server.onDataReceived.connect(MAKE_SLOT_LOCAL(GameSession, clientData));
 };
@@ -32,12 +32,69 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 		{
 			String s;
 			p >> s;
-			cout<<"Client connected: "<<s<<endl;
+			cout<<"Client auth accepted: "<<s<<endl;
+
+			Hero* hero = findPlayerByNickname(s);
+			if(!hero)return;
+
+			HeroController *controller = new HeroNetworkController(peer, hero);
+			m_networkedControllers++;
+			m_networkControllers.push_back((HeroNetworkController*)controller);
+			m_heroControllers[hero] = controller;
+
+			// inform about online players
+			for(int i = 0; i < playerCount(); i++){
+				Hero *h = getHero(i);
+				Packet info_pck;
+				info_pck << (Uint32)Server::HERO_INFO;
+				info_pck << (Int16)h->id;
+				info_pck << h->position;
+				info_pck << h->nick;
+				peer->send(info_pck);
+
+				if(hero == h){
+					Packet self_pck;
+					self_pck << (Uint32)Server::HERO_IDENTITY;
+					self_pck << (Int16)h->id;					
+					peer->send(self_pck);
+				}
+			}
 
 		}break;
+	case Client::TEST:
+		{
+			String message;
+			p >> message;
+
+			cout<<"Test Packet: "<<message<<endl;
+
+		}break;
+	case Client::HERO_DIRECTION_REQUEST:
+		{
+			Int16 id;
+			p >> id;
+			Hero* hero = findPlayerById(id);
+			if(hero){
+				// update
+				p >> hero->moveDirection;
+
+				//tell the others
+				Packet pck2;
+				pck2 << (Uint32)Server::HERO_DIRECTION_UPDATE;
+				pck2 << (Int16)hero->id;
+				pck2 << hero->moveDirection;
+
+				for(int i = 0; i < m_networkControllers.size(); i++){
+					HeroNetworkController* controller = m_networkControllers[i];
+					controller->peer->send(pck2);
+				}
+			}
+
+		}break;
+
 	}
 
-	cout<<"DATA: "<<p.getDataSize()<<endl;
+	//cout<<"DATA: "<<p.getDataSize()<<endl;
 };
 
 /// Starts the game
@@ -102,9 +159,55 @@ void GameSession::killPlayer(String nick){
 	}
 };
 
+/// Number of network controlled heros
+int GameSession::getNetworkPlayerCount(){
+	return m_networkedControllers;
+};
+
+/// Get a network controller by index
+HeroNetworkController* GameSession::getNetworkPlayer(int index){
+	int j = 0;
+	for(std::map<Hero*, HeroController*>::iterator it = m_heroControllers.begin(); it != m_heroControllers.end(); it++){
+		if((*it).second->m_type == NETWORK_CONTROLLER){			
+			if(j == index){
+				return (HeroNetworkController*)(*it).second;
+			}
+			j++;
+		}
+	}
+	return NULL;
+};
+
+
 /// Players ingame
 int GameSession::playerCount(){
 	return m_team1.size() + m_team2.size();
+};
+
+/// Get hero by index
+Hero* GameSession::getHero(int index){
+	if(index < m_team1.size()){
+		return &m_team1[index];
+	}
+	else{
+		return &m_team2[index-m_team1.size()];
+	}
+};
+
+/// Finds a player by its id
+Hero* GameSession::findPlayerById(Int16 id){	
+	for(unsigned int i = 0; i < m_team1.size(); i++){
+		if(m_team1[i].id == id){
+			return &m_team1[i];
+		}
+	}
+	for(unsigned int i = 0; i < m_team2.size(); i++){
+		if(m_team2[i].id == id){
+			return &m_team2[i];
+		}
+	}
+
+	return NULL;
 };
 
 /// Finds a player by nickname, in both teams
@@ -169,13 +272,13 @@ void GameSession::updateSecondly(){
 
 void GameSession::addHeroTeam1(Hero hero){
 	hero.id = 1;
-	hero.position = Vec2f(0,0);
+	hero.position = Vec2f(200,600);
 	m_team1.push_back(hero);	
 };
 
 void GameSession::addHeroTeam2(Hero hero){
 	hero.id = 2;
-	hero.position = Vec2f(1000, 0);
+	hero.position = Vec2f(1000, 500);
 	m_team2.push_back(hero);	
 };
 
