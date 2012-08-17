@@ -15,7 +15,14 @@ ClientApp::ClientApp(){
 void ClientApp::onCreate(){
 	m_renderer = Renderer::createAutomaticRenderer(&getWindow());
 
-	m_client.connect("127.0.0.1", 8002, 100);
+	String account_name = "127.0.0.1";
+	ScopedFile fp("../../ip.txt", IODevice::TextRead);
+	if(fp.canRead()){
+		TextStream ts(&fp);
+		account_name = ts.getLine();
+	}
+
+	m_client.connect(account_name, 8002, 100);
 };
 
 /// Game events
