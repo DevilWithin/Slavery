@@ -63,12 +63,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>K:\Development\ParabolaEngine\Library\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\ParabolaEngine\Library\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>K:\Development\ParabolaEngine\Library\Bin;K:\Development\ParabolaEngine\Library\Externals\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\ParabolaEngine\Library\Bin;..\..\..\..\ParabolaEngine\Library\Externals\vs2010;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ParabolaEngine-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-graphics-s-d.lib;box2d-d.lib;libsigcpp-d.lib;angelscriptd.lib;enet-d.lib;ws2_32.lib;RocketCore_d.lib;RocketControls_d.lib;RocketDebugger_d.lib;glu32.lib;SPARK_debug.lib;SPARK_GL_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

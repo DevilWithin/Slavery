@@ -62,7 +62,7 @@ void GameSession::start(){
 /// Updates the game state
 void GameSession::update(){
 	String cmd = "TITLE " + String::number(m_gameTime.getElapsedTime().asSeconds());
-	system(cmd.c_str());
+	//system(cmd.c_str());
 
 	float currentTime = m_gameTime.getElapsedTime().asSeconds();
 	float elapsedTime = currentTime - lastUpdate;
