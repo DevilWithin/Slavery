@@ -73,7 +73,8 @@ void ClientApp::onClientConnect(NetworkClient* client){
 	cout<<"Account: "<<account_name<<endl;
 
 	Packet p;
-	
+	p << (Uint32)Client::AUTH_REQUEST;
+	p << account_name;	
 	client->send(p);
 };
 

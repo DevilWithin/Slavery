@@ -8,6 +8,7 @@ GameSession::GameSession(){
 	onGame = false;
 
 	m_server.onClientConnect.connect(MAKE_SLOT_LOCAL(GameSession, clientConnect));
+	m_server.onDataReceived.connect(MAKE_SLOT_LOCAL(GameSession, clientData));
 };
 
 /// Wait for connections
@@ -17,37 +18,26 @@ void GameSession::startListening(){
 
 /// Callback when a new client connects
 void GameSession::clientConnect(NetworkServerPeer* peer){
-	if(onGame){
-		// Already on game, rejecting client
+	m_neutralPeers.push_back(peer);	
+};
+
+/// Callback when data is received
+void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
+	Packet p = packet->getData();
+	Uint32 packet_id;
+	p >> packet_id;
+
+	switch(packet_id){
+	case Client::AUTH_REQUEST:
+		{
+			String s;
+			p >> s;
+			cout<<"Client connected: "<<s<<endl;
+
+		}break;
 	}
-	else{
 
-	}
-
-	// DIRTY fix - first connection is Grimshaw, then Liryea
-	String playerToSend;
-	if(m_heroControllers.size() == 0){
-		playerToSend = "Grimshaw"; 
-	}
-	else playerToSend = "Liryea";
-
-	//
-	Hero* hero = findPlayerByNickname(playerToSend);
-	HeroNetworkController *heroController = new HeroNetworkController(peer, hero);
-	m_heroControllers[hero] = heroController;
-
-	// entry packet
-	String pck = "01 ";
-	pck += String::number(hero->id) + " ";
-	pck += String::number(hero->position.x);
-	pck += ",";
-	pck += String::number(hero->position.y);
-
-
-
-	peer->send(pck);
-	
-	
+	cout<<"DATA: "<<p.getDataSize()<<endl;
 };
 
 /// Starts the game

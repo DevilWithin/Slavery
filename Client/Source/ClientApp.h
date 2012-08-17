@@ -12,6 +12,12 @@ using namespace pE;
 #include <vector>
 #include "Hero.h"
 
+namespace Client{
+	enum ClientGeneratedPacket{
+		AUTH_REQUEST = 0
+	};
+}
+
 class ClientApp : public GameCore{
 public:
 	/// Startup

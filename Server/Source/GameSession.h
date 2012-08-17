@@ -11,6 +11,12 @@ using namespace pE;
 #include "Hero.h"
 #include "HeroController.h"
 
+namespace Client{
+	enum ClientGeneratedPacket{
+		AUTH_REQUEST = 0
+	};
+}
+
 class GameSession{
 public:
 	/// Startup
@@ -21,6 +27,9 @@ public:
 
 	/// Callback when a new client connects
 	void clientConnect(NetworkServerPeer* peer);
+
+	/// Callback when data is received
+	void clientData(NetworkServerPeer* peer, NetworkPacket* packet);
 
 	/// Starts the game
 	void start();
@@ -59,6 +68,9 @@ public:
 
 	// Networking
 	NetworkServer m_server;
+
+	/// Just connected peers, that are nothing yet
+	std::vector<NetworkServerPeer*> m_neutralPeers;
 
 	/// Each Hero must have a controller, AI or Network, otherwise it is just a dummy
 	std::map<Hero*, HeroController*> m_heroControllers;
