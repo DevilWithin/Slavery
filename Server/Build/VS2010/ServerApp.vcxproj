@@ -14,6 +14,7 @@
     <ClCompile Include="..\..\Source\GameSession.cpp" />
     <ClCompile Include="..\..\Source\Hero.cpp" />
     <ClCompile Include="..\..\Source\HeroController.cpp" />
+    <ClCompile Include="..\..\Source\HeroIntelligenceController.cpp" />
     <ClCompile Include="..\..\Source\HeroNetworkController.cpp" />
     <ClCompile Include="..\..\Source\Main.cpp" />
   </ItemGroup>
@@ -21,6 +22,7 @@
     <ClInclude Include="..\..\Source\GameSession.h" />
     <ClInclude Include="..\..\Source\Hero.h" />
     <ClInclude Include="..\..\Source\HeroController.h" />
+    <ClInclude Include="..\..\Source\HeroIntelligenceController.h" />
     <ClInclude Include="..\..\Source\HeroNetworkController.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

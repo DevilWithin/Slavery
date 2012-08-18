@@ -11,6 +11,7 @@ using namespace pE;
 #include <map>
 #include "Hero.h"
 #include "HeroController.h"
+#include "HeroIntelligenceController.h"
 
 namespace Client{
 	enum ClientGeneratedPacket{
@@ -36,6 +37,7 @@ namespace Server{
 };
 
 class HeroNetworkController;
+class HeroIntelligenceController;
 
 class GameSession{
 public:

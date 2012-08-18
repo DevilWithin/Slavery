@@ -1,5 +1,6 @@
 #include "GameSession.h"
 #include "HeroNetworkController.h"
+#include "HeroIntelligenceController.h"
 
 #include <iostream>
 using namespace std;
@@ -43,7 +44,7 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			Hero* hero = findPlayerByNickname(s);
 			if(!hero)return;
 
-			HeroController *controller = new HeroNetworkController(peer, hero);
+			HeroController *controller = new HeroNetworkController(peer, hero, this);
 			peer->setUserData(controller);
 			m_networkedControllers++;
 			m_networkControllers.push_back((HeroNetworkController*)controller);
@@ -55,11 +56,12 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 				Packet info_pck;
 				info_pck << (Uint32)Server::HERO_INFO;
 				info_pck << (Int16)h->id;
+				info_pck << (Int16)h->teamid;
 				info_pck << h->position;
 				info_pck << h->nick;
 				info_pck << h->movementSpeed;
 				info_pck << h->health;
-				info_pck << h->maxHealth;
+				info_pck << h->maxHealth;				
 				peer->send(info_pck);
 
 				if(hero == h){
@@ -84,13 +86,17 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			String message;
 			p >> message;
 
-			Packet pck;
-			pck << (Uint32)Server::GLOBAL_CHAT_MESSAGE;
-			pck << (Int16)((HeroController*)peer->getUserData())->hero->id;
-			pck << message;
-			m_server.send(pck);
+			if(!message.empty() && message[0] == '/'){
+				cout<<"EXEC: "<<message<<endl;
+			}else{
+				Packet pck;
+				pck << (Uint32)Server::GLOBAL_CHAT_MESSAGE;
+				pck << (Int16)((HeroController*)peer->getUserData())->hero->id;
+				pck << message;
+				m_server.send(pck);
 
-			cout<< ((HeroController*)peer->getUserData())->hero->nick <<" said: "<<message<<endl;
+				cout<< ((HeroController*)peer->getUserData())->hero->nick <<" said: "<<message<<endl;
+			}		
 
 		}break;
 	case Client::DROP_BOMB:
@@ -194,10 +200,13 @@ void GameSession::update(){
 	}
 
 
-	if(m_test.getElapsedTime().asSeconds() > 1){
-		logPlayer("Grimshaw");
-		logPlayer("Liryea");
-		cout<<endl;
+	if(m_test.getElapsedTime().asSeconds() > 1.f / 4.f){
+		
+		/// Do AI 4 time per second
+		for(std::map<Hero*, HeroController*>::iterator it = m_heroControllers.begin(); it != m_heroControllers.end(); it++){
+			it->second->onThink();
+		}
+
 		m_test.reset();
 	}
 
@@ -336,6 +345,7 @@ void GameSession::addHeroTeam1(Hero hero){
 	hero.id = ++m_idCounter;
 	hero.position = Vec2f(200,600);
 	hero.spawnPoint = Vec2f(100 + m_idCounter*100,100 + m_idCounter*100);
+	hero.teamid = 1;
 	m_team1.push_back(hero);	
 };
 
@@ -343,6 +353,7 @@ void GameSession::addHeroTeam2(Hero hero){
 	hero.id = ++m_idCounter;
 	hero.position = Vec2f(1000 + m_idCounter*100, 500);
 	hero.spawnPoint = Vec2f(1000 + m_idCounter*100,1000 + m_idCounter*50);
+	hero.teamid = 2;
 	m_team2.push_back(hero);	
 };
 

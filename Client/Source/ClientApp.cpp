@@ -16,8 +16,12 @@ ClientApp::ClientApp(){
 /// When game is created
 void ClientApp::onCreate(){
 	m_renderer = Renderer::createAutomaticRenderer(&getWindow());
+	m_view.setRect(0,0,1024,768);
+
+	dirt.loadFromFile("dirt.png");
 
 	m_ui = RocketContext::create("ui", Vec2i(1024,768));
+	UIElementScroll::registerWithlibRocket();
 	m_ui->onEvent.connect(MAKE_SLOT_LOCAL(ClientApp, rocketEvent));
 	m_ui->loadFont("DroidSansFallback.ttf");
 	m_chat = m_ui->showDocument("chat.ui");
@@ -37,6 +41,8 @@ void ClientApp::rocketEvent(String event){
 	if(event == "chat.send"){
 		String message = ((Rocket::Controls::ElementFormControlInput*)m_chat->getElementById("inputbox"))->GetValue().CString();
 		((Rocket::Controls::ElementFormControlInput*)m_chat->getElementById("inputbox"))->SetValue("");
+
+		if(message.empty())return;
 
 		Packet pck;
 		pck << (Uint32)Client::CHAT_MESSAGE;
@@ -165,8 +171,20 @@ void ClientApp::onEvent(Event &event){
 void ClientApp::onRender(){
 	m_renderer->clearBuffers();
 
-	m_view.setRect(0,0,2000,1700);
 	m_renderer->setView(m_view);
+
+	//draw some ground
+	Sprite s;
+	s.setTexture(dirt);
+	s.resize(52,52);
+
+	for(float x = 0; x < 3000; x += 52){
+		for(float y = 0; y < 3000; y+=52){
+			s.setPosition(x,y);
+			m_renderer->draw(s);
+		}
+	}
+
 
 	for(unsigned int i = 0; i < m_heroList.size(); i++){
 		if(m_heroList[i] == m_myHero)
@@ -179,6 +197,9 @@ void ClientApp::onRender(){
 		String content = m_heroList[i]->nick  + "[" + String::number(m_heroList[i]->health / m_heroList[i]->maxHealth * 100) + "]\nKills: " + String::number(m_heroList[i]->kills) + "   Deaths: " + String::number(m_heroList[i]->deaths);
 		if(m_heroList[i]->dead){
 			content.append("\nRespawn: " + String::number(m_heroList[i]->respawnTimeLeft));
+		}
+		if(m_myHero && m_heroList[i]->teamid != m_myHero->teamid){
+			t.setColor(Color(255,0,30, 160));
 		}
 		t.setString(content);
 		m_renderer->draw(t);
@@ -198,6 +219,9 @@ void ClientApp::onUpdate(Time time){
 
 	for(unsigned int i = 0; i < m_heroList.size(); i++){
 		m_heroList[i]->position += m_heroList[i]->direction * m_heroList[i]->movementSpeed * time.asSeconds();
+
+		if(m_heroList[i] == m_myHero)
+			m_view.setCenter(m_heroList[i]->position);
 
 		if(m_heroList[i]->dead)
 			m_heroList[i]->respawnTimeLeft -= time.asSeconds();
@@ -236,15 +260,16 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 		case Server::HERO_INFO:
 			{
 				String nick;
-				Int16 id;
+				Int16 id, tid;
 				Vec2f pos;
 				float movement;
 				float hp, maxHp;
 
-				pck >> id >> pos >> nick >> movement >> hp >> maxHp;
+				pck >> id >> tid >> pos >> nick >> movement >> hp >> maxHp;
 
 				Hero *hero = new Hero();
 				hero->id = id;
+				hero->teamid = tid;
 				hero->position = pos;
 				hero->nick = nick;
 				hero->movementSpeed = movement;
@@ -347,10 +372,16 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 
 					RocketElement* container = m_chat->getElementById("container");
 					if(container){
-						message = hero->nick + ": " + message;
+						message = " <p style=\"color: red;\">"  + hero->nick + ":</p> " + message;
 						RocketElement* entry = (RocketElement*)Rocket::Core::Factory::InstanceElement(container, "entry", "entry", Rocket::Core::XMLAttributes());
 						entry->SetInnerRML(message.c_str());
 						container->AppendChild(entry);
+
+						RocketElement* scroller = m_chat->getElementById("scroller");
+						if(scroller){
+							scroller->SetScrollTop(scroller->GetScrollTop() + entry->GetClientHeight());
+						}
+						
 					}
 
 				}

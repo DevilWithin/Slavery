@@ -12,6 +12,7 @@ public:
 
 	/// The unique identifier of the hero being controlled
 	Int16 id;
+	Int16 teamid;
 
 	/// Health values
 	float health;

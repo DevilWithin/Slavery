@@ -22,6 +22,9 @@
     <ClCompile Include="..\..\Source\HeroNetworkController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\HeroIntelligenceController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\GameSession.h">
@@ -34,6 +37,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\HeroNetworkController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\HeroIntelligenceController.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

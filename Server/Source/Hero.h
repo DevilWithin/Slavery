@@ -30,6 +30,7 @@ public:
 
 	/// Network id of the hero
 	int id;
+	int teamid;
 
 	/// Nickname of the player
 	String nick;

@@ -12,7 +12,7 @@ class Hero;
 class HeroNetworkController: public HeroController{
 public:
 	/// Startup from a server peer
-	HeroNetworkController(NetworkServerPeer* peer, Hero* hero);
+	HeroNetworkController(NetworkServerPeer* peer, Hero* hero, GameSession* session);
 
 	/// Called when the peer has data
 	void handleMessage(NetworkPacket* packet);

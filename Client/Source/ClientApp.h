@@ -8,6 +8,7 @@
 #include <ParabolaCore/TextStream.h>
 #include <ParabolaCore/Text.h>
 #include <ParabolaCore/RocketContext.h>
+#include <ParabolaCore/RocketUIVerticalScroller.h>
 #include <Rocket/Controls.h>
 
 using namespace pE;
@@ -69,6 +70,8 @@ public:
 
 	/// Rendering
 	Renderer *m_renderer;
+
+	Texture dirt;
 
 	/// Networking
 	NetworkClient m_client;

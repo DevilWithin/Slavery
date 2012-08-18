@@ -5,8 +5,7 @@
 using namespace std;
 
 /// Startup from a server peer
-HeroNetworkController::HeroNetworkController(NetworkServerPeer* peer, Hero* hero){
-	this->hero = hero;
+HeroNetworkController::HeroNetworkController(NetworkServerPeer* peer, Hero* hero, GameSession* session) : HeroController(hero, session){
 	this->peer = peer;
 
 	peer->onDataReceived.connect(MAKE_SLOT_LOCAL(HeroNetworkController, handleMessage));
