@@ -18,7 +18,9 @@ void ClientApp::onCreate(){
 	m_renderer = Renderer::createAutomaticRenderer(&getWindow());
 
 	m_ui = RocketContext::create("ui", Vec2i(1024,768));
+	m_ui->onEvent.connect(MAKE_SLOT_LOCAL(ClientApp, rocketEvent));
 	m_ui->loadFont("DroidSansFallback.ttf");
+	m_chat = m_ui->showDocument("chat.ui");
 
 	String account_name = "127.0.0.1";
 	ScopedFile fp("../../ip.txt", IODevice::TextRead);
@@ -30,8 +32,22 @@ void ClientApp::onCreate(){
 	m_client.connect(account_name, 8002, 100);
 };
 
+/// Called when rocket sends events
+void ClientApp::rocketEvent(String event){
+	if(event == "chat.send"){
+		String message = ((Rocket::Controls::ElementFormControlInput*)m_chat->getElementById("inputbox"))->GetValue().CString();
+		((Rocket::Controls::ElementFormControlInput*)m_chat->getElementById("inputbox"))->SetValue("");
+
+		Packet pck;
+		pck << (Uint32)Client::CHAT_MESSAGE;
+		pck << message;
+		m_client.send(pck);
+	}
+};
+
 /// Game events
 void ClientApp::onEvent(Event &event){
+	m_ui->processEvent(event);
 
 	if(event.type == Event::MouseButtonPressed){
 		if(event.mouseButton.button == Mouse::Right){
@@ -167,6 +183,10 @@ void ClientApp::onRender(){
 		t.setString(content);
 		m_renderer->draw(t);
 	}
+	View v;
+	v.setRect(0,0,1024,768);
+	m_renderer->setView(v);
+	m_renderer->drawRocketContext(m_ui);
 
 	m_renderer->display();
 };
@@ -174,6 +194,7 @@ void ClientApp::onRender(){
 /// Updating the game
 void ClientApp::onUpdate(Time time){
 	m_client.update(10);
+	m_ui->update();
 
 	for(unsigned int i = 0; i < m_heroList.size(); i++){
 		m_heroList[i]->position += m_heroList[i]->direction * m_heroList[i]->movementSpeed * time.asSeconds();
@@ -311,7 +332,29 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 					}
 				}
 
-				cout<<"Update"<<endl;
+				
+			}break;
+		case Server::GLOBAL_CHAT_MESSAGE:
+			{
+				String message;
+				Int16 from;
+
+				pck >> from >> message;
+
+				Hero* hero = getHeroById(from);
+				if(hero){
+					cout << hero->nick << " said: "<<message<<endl;
+
+					RocketElement* container = m_chat->getElementById("container");
+					if(container){
+						RocketElement* entry = (RocketElement*)Rocket::Core::Factory::InstanceElement(container, "entry", "entry", Rocket::Core::XMLAttributes());
+						entry->SetInnerRML(message.c_str());
+						container->AppendChild(entry);
+					}
+
+				}
+				
+
 			}break;
 	}
 };

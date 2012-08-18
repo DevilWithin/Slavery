@@ -16,6 +16,8 @@ int main(int argc, char **argv){
 
 	Hero grimshaw;
 	grimshaw.nick = "Grimshaw";
+	grimshaw.maxHealth = 2000;
+	grimshaw.healthRegen = 50;
 	game.addHeroTeam1(grimshaw);
 
 	Hero toto;
@@ -26,6 +28,7 @@ int main(int argc, char **argv){
 	liryea.nick = "Liryea";	
 	liryea.maxHealth = 200;
 	liryea.healthRegen = 3;
+	liryea.respawnTime = 20;
 	game.addHeroTeam2(liryea);
 
 	game.start();

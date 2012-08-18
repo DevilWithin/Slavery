@@ -1,0 +1,39 @@
+<rml>
+
+<head>
+
+<style>
+
+body
+{
+	font-family: Droid Sans Fallback;
+	color: white;
+	font-size: 40;
+}
+
+input
+{
+	background-color: rgba(240,200,200,200);
+}
+
+entry
+{
+	background-color: white;
+	color: black;
+	display: block;
+}
+
+</style>
+</head>
+
+<body>
+
+Global Chat<br/>
+<div id="container">
+<entry>Hello !</entry>
+</div><br/>
+
+<input id="inputbox" type="text" /><button onclick="context.sendEvent('chat.send');">Send</button>
+
+</body>
+</rml>

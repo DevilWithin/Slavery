@@ -79,6 +79,20 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			cout<<"Test Packet: "<<message<<endl;
 
 		}break;
+	case Client::CHAT_MESSAGE:
+		{
+			String message;
+			p >> message;
+
+			Packet pck;
+			pck << (Uint32)Server::GLOBAL_CHAT_MESSAGE;
+			pck << (Int16)((HeroController*)peer->getUserData())->hero->id;
+			pck << message;
+			m_server.send(pck);
+
+			cout<< ((HeroController*)peer->getUserData())->hero->nick <<" said: "<<message<<endl;
+
+		}break;
 	case Client::DROP_BOMB:
 		{
 			Vec2f hit;
@@ -321,12 +335,14 @@ void GameSession::updateSecondly(){
 void GameSession::addHeroTeam1(Hero hero){
 	hero.id = ++m_idCounter;
 	hero.position = Vec2f(200,600);
+	hero.spawnPoint = Vec2f(100 + m_idCounter*100,100 + m_idCounter*100);
 	m_team1.push_back(hero);	
 };
 
 void GameSession::addHeroTeam2(Hero hero){
 	hero.id = ++m_idCounter;
-	hero.position = Vec2f(1000 + m_idCounter*10, 500);
+	hero.position = Vec2f(1000 + m_idCounter*100, 500);
+	hero.spawnPoint = Vec2f(1000 + m_idCounter*100,1000 + m_idCounter*50);
 	m_team2.push_back(hero);	
 };
 

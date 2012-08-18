@@ -8,6 +8,7 @@
 #include <ParabolaCore/TextStream.h>
 #include <ParabolaCore/Text.h>
 #include <ParabolaCore/RocketContext.h>
+#include <Rocket/Controls.h>
 
 using namespace pE;
 
@@ -19,12 +20,14 @@ namespace Client{
 		AUTH_REQUEST = 0,
 		TEST,
 		DROP_BOMB,
-		HERO_DIRECTION_REQUEST
+		HERO_DIRECTION_REQUEST,
+		CHAT_MESSAGE
 	};
 }
 namespace Server{
 	enum ServerGeneratedPacket{
 		AUTH_SUCESSFULL = 0,
+		GLOBAL_CHAT_MESSAGE,
 		HERO_INFO,
 		HERO_IDENTITY,
 		HERO_DIRECTION_UPDATE,
@@ -34,7 +37,6 @@ namespace Server{
 		HERO_DEATH
 	};
 };
-
 
 class ClientApp : public GameCore{
 public:
@@ -59,6 +61,9 @@ public:
 	/// Called when the client connected
 	void onClientConnect(NetworkClient* client);
 
+	/// Called when rocket sends events
+	void rocketEvent(String event);
+
 	/// Find a hero by its id
 	Hero* getHeroById(int id);
 
@@ -74,6 +79,7 @@ public:
 
 	/// Rendering
 	RocketContext* m_ui;
+	RocketDocument* m_chat;
 	View m_view;
 };
 
