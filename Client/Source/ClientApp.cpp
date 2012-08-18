@@ -347,6 +347,7 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 
 					RocketElement* container = m_chat->getElementById("container");
 					if(container){
+						message = hero->nick + ": " + message;
 						RocketElement* entry = (RocketElement*)Rocket::Core::Factory::InstanceElement(container, "entry", "entry", Rocket::Core::XMLAttributes());
 						entry->SetInnerRML(message.c_str());
 						container->AppendChild(entry);
