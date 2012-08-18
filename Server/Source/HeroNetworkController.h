@@ -18,7 +18,6 @@ public:
 	void handleMessage(NetworkPacket* packet);
 
 	NetworkServerPeer* peer;
-	Hero* hero;
 };
 
 #endif // HeroNetworkController_h__

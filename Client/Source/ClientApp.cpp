@@ -160,7 +160,11 @@ void ClientApp::onRender(){
 
 		Text t;
 		t.setPosition(m_heroList[i]->position);
-		t.setString(m_heroList[i]->nick  + "[" + String::number(m_heroList[i]->health / m_heroList[i]->maxHealth * 100) + "]\nKills: " + String::number(m_heroList[i]->kills) + "   Deaths: " + String::number(m_heroList[i]->deaths));
+		String content = m_heroList[i]->nick  + "[" + String::number(m_heroList[i]->health / m_heroList[i]->maxHealth * 100) + "]\nKills: " + String::number(m_heroList[i]->kills) + "   Deaths: " + String::number(m_heroList[i]->deaths);
+		if(m_heroList[i]->dead){
+			content.append("\nRespawn: " + String::number(m_heroList[i]->respawnTimeLeft));
+		}
+		t.setString(content);
 		m_renderer->draw(t);
 	}
 
@@ -173,6 +177,9 @@ void ClientApp::onUpdate(Time time){
 
 	for(unsigned int i = 0; i < m_heroList.size(); i++){
 		m_heroList[i]->position += m_heroList[i]->direction * m_heroList[i]->movementSpeed * time.asSeconds();
+
+		if(m_heroList[i]->dead)
+			m_heroList[i]->respawnTimeLeft -= time.asSeconds();
 	}
 };
 
@@ -247,6 +254,39 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 				Hero* hero = getHeroById(id);
 				if(hero){
 					hero->health -= damage;
+				}
+			}break;
+		case Server::HERO_RESPAWN:
+			{
+				Int16 id;
+				pck >> id;
+
+				Hero* hero = getHeroById(id);
+				if(hero){
+					// respawn him
+					pck >> hero->position;
+					pck >> hero->health;
+
+					hero->dead = false;
+				}
+			}break;
+		case Server::HERO_DEATH:
+			{
+				Int16 id, source, respawn;
+				pck >> id >> respawn >> source;
+
+				Hero* hero = getHeroById(id);
+				if(hero){
+					hero->dead = true;
+					hero->respawnTime = respawn;
+					hero->respawnTimeLeft = respawn;
+					hero->deaths ++;
+
+					Hero* killer = getHeroById(source);
+					if(killer){
+						killer->kills ++;
+						cout<<killer->nick << " has killed "<<hero->nick<<"!"<<endl;
+					}
 				}
 			}break;
 		case Server::HERO_RECOVER:

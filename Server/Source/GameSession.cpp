@@ -44,6 +44,7 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			if(!hero)return;
 
 			HeroController *controller = new HeroNetworkController(peer, hero);
+			peer->setUserData(controller);
 			m_networkedControllers++;
 			m_networkControllers.push_back((HeroNetworkController*)controller);
 			m_heroControllers[hero] = controller;
@@ -84,14 +85,27 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			p >> hit;
 
 			for(unsigned int i = 0; i < playerCount(); i++){
-				if(Math::distance(getHero(i)->position, hit) < 20){
-					getHero(i)->health -= 20;
+				if(Math::distance(getHero(i)->position, hit) < 20 && !getHero(i)->dead){
+					Int16 taken = getHero(i)->takeHealth(20);
+					Int16 sourceId = ((HeroController*)peer->getUserData())->hero->id;
 
 					Packet pck;
 					pck << (Uint32)Server::HERO_DAMAGE;
 					pck << (Int16)getHero(i)->id;
-					pck << (Int16)20;
+					pck << (Int16)taken;
 					m_server.send(pck);
+
+					if(getHero(i)->health == 0){
+						getHero(i)->dead = true;
+						getHero(i)->timeSinceDeath = 0.f;
+
+						Packet pck2;
+						pck2 << (Uint32)Server::HERO_DEATH;
+						pck2 << (Int16)getHero(i)->id; // Who died
+						pck2 << (Int16)getHero(i)->respawnTime; //How long it will take
+						pck2 << (Int16)sourceId; // Who killed
+						m_server.send(pck2);
+					}
 				}
 			}
 
@@ -291,6 +305,14 @@ void GameSession::updateSecondly(){
 				hero->dead = false;
 				hero->position = hero->spawnPoint;
 				cout<<"Respawn: "<<hero->nick<<endl;
+
+
+				Packet pck;
+				pck << (Uint32)Server::HERO_RESPAWN;
+				pck << (Int16)hero->id;
+				pck << hero->position;
+				pck << hero->health;
+				m_server.send(pck);
 			}
 		}
 	}

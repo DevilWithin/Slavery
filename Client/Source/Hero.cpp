@@ -6,4 +6,6 @@ Hero::Hero(){
 	movementSpeed = 30.f;
 	kills = 0;
 	deaths = 0;
+	dead = false;
+	respawnTime = 10000000;
 };

@@ -29,10 +29,11 @@ namespace Server{
 		HERO_IDENTITY,
 		HERO_DIRECTION_UPDATE,
 		HERO_DAMAGE,
-		HERO_RECOVER
+		HERO_RECOVER,
+		HERO_RESPAWN,
+		HERO_DEATH
 	};
 };
-
 
 
 class ClientApp : public GameCore{

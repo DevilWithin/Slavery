@@ -9,6 +9,9 @@ class Hero{
 public:
 	Hero();
 
+	/// Damage the hero
+	Int16 takeHealth(int amount);
+
 	/// Health
 	float health;
 	float maxHealth;

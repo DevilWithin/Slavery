@@ -1,6 +1,8 @@
 #ifndef HeroController_h__
 #define HeroController_h__
 
+#include "Hero.h"
+
 enum ControllerTypes{
 	NETWORK_CONTROLLER = 0,
 	AI_CONTROLLER
@@ -8,6 +10,9 @@ enum ControllerTypes{
 
 class HeroController{
 public:
+
+	Hero* hero;
+
 	int m_type;
 };
 

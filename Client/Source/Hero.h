@@ -16,6 +16,8 @@ public:
 	/// Health values
 	float health;
 	float maxHealth;
+	bool dead;
+	Int16 respawnTime, respawnTimeLeft;
 
 	/// Current position of the hero
 	Vec2f position;
