@@ -57,14 +57,14 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 				info_pck << h->position;
 				info_pck << h->nick;
 				info_pck << h->movementSpeed;
-				info_pck << (Int16)h->health;
-				info_pck << (Int16)h->maxHealth;
+				info_pck << h->health;
+				info_pck << h->maxHealth;
 				peer->send(info_pck);
 
 				if(hero == h){
 					Packet self_pck;
 					self_pck << (Uint32)Server::HERO_IDENTITY;
-					self_pck << (Int16)h->id;					
+					self_pck << (Int16)h->id;			
 					peer->send(self_pck);
 				}
 			}

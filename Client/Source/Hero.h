@@ -14,8 +14,8 @@ public:
 	Int16 id;
 
 	/// Health values
-	Int16 health;
-	Int16 maxHealth;
+	float health;
+	float maxHealth;
 
 	/// Current position of the hero
 	Vec2f position;

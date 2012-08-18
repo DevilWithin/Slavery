@@ -197,7 +197,7 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 				Int16 id;
 				Vec2f pos;
 				float movement;
-				Int16 hp, maxHp;
+				float hp, maxHp;
 
 				pck >> id >> pos >> nick >> movement >> hp >> maxHp;
 
