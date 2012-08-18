@@ -17,6 +17,9 @@ ClientApp::ClientApp(){
 void ClientApp::onCreate(){
 	m_renderer = Renderer::createAutomaticRenderer(&getWindow());
 
+	m_ui = RocketContext::create("ui", Vec2i(1024,768));
+	m_ui->loadFont("DroidSansFallback.ttf");
+
 	String account_name = "127.0.0.1";
 	ScopedFile fp("../../ip.txt", IODevice::TextRead);
 	if(fp.canRead()){
@@ -43,22 +46,44 @@ void ClientApp::onEvent(Event &event){
 
 		}
 		if(event.key.code == Keyboard::A){
+			if(m_myHero){
+				m_myHero->direction.x = -1;
 
-			Packet p;
-			p << (Uint32)Client::TEST;
-			p << "Client pressed A";
-			m_client.send(p);
+				Packet p;
+				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
+				p << m_myHero->id;
+				p << m_myHero->direction;
+				m_client.send(p);
+			}
+
+		}
+		if(event.key.code == Keyboard::W){
+			if(m_myHero){
+				m_myHero->direction.y = -1;
+
+				Packet p;
+				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
+				p << m_myHero->id;
+				p << m_myHero->direction;
+				m_client.send(p);
+			}
+
+		}
+		if(event.key.code == Keyboard::S){
+			if(m_myHero){
+				m_myHero->direction.y = 1;
+
+				Packet p;
+				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
+				p << m_myHero->id;
+				p << m_myHero->direction;
+				m_client.send(p);
+			}
 
 		}
 	}
 	else if(event.type == Event::KeyReleased){
-		if(event.key.code == Keyboard::D){
-
-			Packet p;
-			p << (Uint32)Client::TEST;
-			p << "Client released D";
-			m_client.send(p);
-
+		if(event.key.code == Keyboard::D){			
 			if(m_myHero){
 				m_myHero->direction.x = 0;
 
@@ -68,8 +93,39 @@ void ClientApp::onEvent(Event &event){
 				p << m_myHero->direction;
 				m_client.send(p);
 			}
+		}
+		if(event.key.code == Keyboard::A){			
+			if(m_myHero){
+				m_myHero->direction.x = 0;
 
+				Packet p;
+				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
+				p << m_myHero->id;
+				p << m_myHero->direction;
+				m_client.send(p);
+			}
+		}
+		if(event.key.code == Keyboard::S){			
+			if(m_myHero){
+				m_myHero->direction.y = 0;
 
+				Packet p;
+				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
+				p << m_myHero->id;
+				p << m_myHero->direction;
+				m_client.send(p);
+			}
+		}
+		if(event.key.code == Keyboard::W){			
+			if(m_myHero){
+				m_myHero->direction.y = 0;
+
+				Packet p;
+				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
+				p << m_myHero->id;
+				p << m_myHero->direction;
+				m_client.send(p);
+			}
 		}
 	}
 };
@@ -90,7 +146,7 @@ void ClientApp::onRender(){
 
 		Text t;
 		t.setPosition(m_heroList[i]->position);
-		t.setString(m_heroList[i]->nick);
+		t.setString(m_heroList[i]->nick  + "[" + String::number(m_heroList[i]->health / m_heroList[i]->maxHealth * 100) + "]");
 		m_renderer->draw(t);
 	}
 
@@ -131,18 +187,27 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 	pck >> packet_id;
 
 	switch(packet_id){
+		case Server::AUTH_SUCESSFULL:
+		{
+			cout<<"Server authorized login."<<endl;
+		}break;
 		case Server::HERO_INFO:
 			{
 				String nick;
 				Int16 id;
 				Vec2f pos;
+				float movement;
+				Int16 hp, maxHp;
 
-				pck >> id >> pos >> nick;
+				pck >> id >> pos >> nick >> movement >> hp >> maxHp;
 
 				Hero *hero = new Hero();
 				hero->id = id;
 				hero->position = pos;
-				hero->nick = nick;			
+				hero->nick = nick;
+				hero->movementSpeed = movement;
+				hero->health = hp;
+				hero->maxHealth = maxHp;
 
 				m_heroList.push_back(hero);
 

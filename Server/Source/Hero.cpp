@@ -8,7 +8,7 @@ Hero::Hero(){
 	gold = 450;
 	level = 1;
 	moveDirection = Vec2f(0,0);
-	movementSpeed = 30.f;
+	movementSpeed = 150.f;
 	model = "Default";
 	spawnPoint = Vec2f(300,300);
 	respawnTime = 5.f;

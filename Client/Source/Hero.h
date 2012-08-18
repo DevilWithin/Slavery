@@ -13,6 +13,10 @@ public:
 	/// The unique identifier of the hero being controlled
 	Int16 id;
 
+	/// Health values
+	Int16 health;
+	Int16 maxHealth;
+
 	/// Current position of the hero
 	Vec2f position;
 

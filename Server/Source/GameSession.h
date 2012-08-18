@@ -15,15 +15,19 @@ namespace Client{
 	enum ClientGeneratedPacket{
 		AUTH_REQUEST = 0,
 		TEST,
-		HERO_DIRECTION_REQUEST
+		HERO_DIRECTION_REQUEST,
+
+		ADMIN_REQUEST
 	};
 }
 
 namespace Server{
 	enum ServerGeneratedPacket{
-		HERO_INFO = 0,
+		AUTH_SUCESSFULL = 0,
+		HERO_INFO,
 		HERO_IDENTITY,
 		HERO_DIRECTION_UPDATE
+
 	};
 };
 
@@ -100,6 +104,8 @@ public:
 	std::map<Hero*, HeroController*> m_heroControllers;
 	std::vector<HeroNetworkController*> m_networkControllers;
 	int m_networkedControllers;
+
+	Int64 m_idCounter;
 };
 
 #endif

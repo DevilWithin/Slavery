@@ -7,6 +7,7 @@
 #include <ParabolaCore/ScopedFile.h>
 #include <ParabolaCore/TextStream.h>
 #include <ParabolaCore/Text.h>
+#include <ParabolaCore/RocketContext.h>
 
 using namespace pE;
 
@@ -22,7 +23,8 @@ namespace Client{
 }
 namespace Server{
 	enum ServerGeneratedPacket{
-		HERO_INFO = 0,
+		AUTH_SUCESSFULL = 0,
+		HERO_INFO,
 		HERO_IDENTITY,
 		HERO_DIRECTION_UPDATE
 	};
@@ -61,6 +63,9 @@ public:
 	/// Heros in the game
 	std::vector<Hero*> m_heroList;
 	Hero* m_myHero;
+
+	/// Rendering
+	RocketContext* m_ui;
 };
 
 #endif // ClientApp_h__

@@ -7,6 +7,7 @@ using namespace pE;
 
 int main(int argc, char **argv){
 
+	system("TITLE ServerApp");
 	enet_initialize();
 
 	GameSession game;
@@ -16,6 +17,10 @@ int main(int argc, char **argv){
 	Hero grimshaw;
 	grimshaw.nick = "Grimshaw";
 	game.addHeroTeam1(grimshaw);
+
+	Hero toto;
+	toto.nick = "Mr. Chuckles";
+	game.addHeroTeam2(toto);
 
 	Hero liryea;
 	liryea.nick = "Liryea";	

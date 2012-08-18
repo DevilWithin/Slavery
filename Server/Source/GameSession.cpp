@@ -7,6 +7,7 @@ using namespace std;
 GameSession::GameSession(){
 	onGame = false;
 	m_networkedControllers = 0;
+	m_idCounter = 0;
 	m_server.onClientConnect.connect(MAKE_SLOT_LOCAL(GameSession, clientConnect));
 	m_server.onDataReceived.connect(MAKE_SLOT_LOCAL(GameSession, clientData));
 };
@@ -34,6 +35,11 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			p >> s;
 			cout<<"Client auth accepted: "<<s<<endl;
 
+			Packet pck;
+			pck << (Uint32)Server::AUTH_SUCESSFULL;
+			peer->send(pck);
+			
+
 			Hero* hero = findPlayerByNickname(s);
 			if(!hero)return;
 
@@ -50,6 +56,9 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 				info_pck << (Int16)h->id;
 				info_pck << h->position;
 				info_pck << h->nick;
+				info_pck << h->movementSpeed;
+				info_pck << (Int16)h->health;
+				info_pck << (Int16)h->maxHealth;
 				peer->send(info_pck);
 
 				if(hero == h){
@@ -131,7 +140,7 @@ void GameSession::update(){
 				m_team1[i].position += m_team1[i].moveDirection * updateStep * m_team1[i].movementSpeed;
 			}
 			for(unsigned int i = 0; i < m_team2.size(); i++){
-				m_team2[i].position += m_team2[i].moveDirection * updateStep * m_team1[i].movementSpeed;
+				m_team2[i].position += m_team2[i].moveDirection * updateStep * m_team2[i].movementSpeed;
 			}
 
 			gatheredTime -= updateStep;
@@ -271,14 +280,14 @@ void GameSession::updateSecondly(){
 };
 
 void GameSession::addHeroTeam1(Hero hero){
-	hero.id = 1;
+	hero.id = ++m_idCounter;
 	hero.position = Vec2f(200,600);
 	m_team1.push_back(hero);	
 };
 
 void GameSession::addHeroTeam2(Hero hero){
-	hero.id = 2;
-	hero.position = Vec2f(1000, 500);
+	hero.id = ++m_idCounter;
+	hero.position = Vec2f(1000 + m_idCounter*10, 500);
 	m_team2.push_back(hero);	
 };
 
