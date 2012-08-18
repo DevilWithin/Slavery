@@ -23,6 +23,10 @@ public:
 	/// Nickname of the hero
 	String nick;
 
+	/// Number of kills
+	int kills;
+	int deaths;
+
 	Vec2f direction;
 	float movementSpeed;
 };

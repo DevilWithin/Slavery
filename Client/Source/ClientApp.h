@@ -18,6 +18,7 @@ namespace Client{
 	enum ClientGeneratedPacket{
 		AUTH_REQUEST = 0,
 		TEST,
+		DROP_BOMB,
 		HERO_DIRECTION_REQUEST
 	};
 }
@@ -26,9 +27,12 @@ namespace Server{
 		AUTH_SUCESSFULL = 0,
 		HERO_INFO,
 		HERO_IDENTITY,
-		HERO_DIRECTION_UPDATE
+		HERO_DIRECTION_UPDATE,
+		HERO_DAMAGE,
+		HERO_RECOVER
 	};
 };
+
 
 
 class ClientApp : public GameCore{
@@ -54,6 +58,9 @@ public:
 	/// Called when the client connected
 	void onClientConnect(NetworkClient* client);
 
+	/// Find a hero by its id
+	Hero* getHeroById(int id);
+
 	/// Rendering
 	Renderer *m_renderer;
 
@@ -66,6 +73,7 @@ public:
 
 	/// Rendering
 	RocketContext* m_ui;
+	View m_view;
 };
 
 #endif // ClientApp_h__

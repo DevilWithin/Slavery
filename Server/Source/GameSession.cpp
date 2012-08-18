@@ -78,6 +78,24 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 			cout<<"Test Packet: "<<message<<endl;
 
 		}break;
+	case Client::DROP_BOMB:
+		{
+			Vec2f hit;
+			p >> hit;
+
+			for(unsigned int i = 0; i < playerCount(); i++){
+				if(Math::distance(getHero(i)->position, hit) < 20){
+					getHero(i)->health -= 20;
+
+					Packet pck;
+					pck << (Uint32)Server::HERO_DAMAGE;
+					pck << (Int16)getHero(i)->id;
+					pck << (Int16)20;
+					m_server.send(pck);
+				}
+			}
+
+		}break;
 	case Client::HERO_DIRECTION_REQUEST:
 		{
 			Int16 id;
@@ -247,33 +265,32 @@ void GameSession::logPlayer(String name){
 
 /// All updates that ocurr every 1 second
 void GameSession::updateSecondly(){
-	for(unsigned int i = 0; i < m_team1.size(); i++){
-		if(!m_team1[i].dead){
-			m_team1[i].health += m_team1[i].healthRegen;
-			if(m_team1[i].health >= m_team1[i].maxHealth) m_team1[i].health = m_team1[i].maxHealth;
-		}else{
-			m_team1[i].timeSinceDeath += 1.f;
-			if(m_team1[i].timeSinceDeath >= m_team1[i].respawnTime){
-				m_team1[i].health = m_team1[i].maxHealth;
-				m_team1[i].dead = false;
-				m_team1[i].position = m_team1[i].spawnPoint;
-				cout<<"Respawn: "<<m_team1[i].nick<<endl;
-			}
-		}
-	}
+	for(unsigned int i = 0; i < playerCount(); i++){
+		Hero* hero = getHero(i);
 
-	for(unsigned int i = 0; i < m_team2.size(); i++){
-		if(!m_team2[i].dead){
-			m_team2[i].health += m_team2[i].healthRegen;
-			if(m_team2[i].health >= m_team2[i].maxHealth) m_team2[i].health = m_team2[i].maxHealth;
-		}
-		else{
-			m_team2[i].timeSinceDeath += 1.f;
-			if(m_team2[i].timeSinceDeath >= m_team2[i].respawnTime){
-				m_team2[i].health = m_team2[i].maxHealth;
-				m_team2[i].dead = false;
-				m_team2[i].position = m_team2[i].spawnPoint;
-				cout<<"Respawn: "<<m_team2[i].nick<<endl;
+		if(!hero->dead){
+			Int16 regen = hero->healthRegen;
+
+			hero->health += hero->healthRegen;
+			if(hero->health >= hero->maxHealth){
+				regen = regen - (hero->health - hero->maxHealth);
+				hero->health = hero->maxHealth;
+			}
+
+			Packet pck;
+			pck << (Uint32)Server::HERO_RECOVER;
+			pck << (Int16)hero->id;
+			pck << regen;
+
+			m_server.send(pck);
+
+		}else{
+			hero->timeSinceDeath += 1.f;
+			if(hero->timeSinceDeath >= hero->respawnTime){
+				hero->health = hero->maxHealth;
+				hero->dead = false;
+				hero->position = hero->spawnPoint;
+				cout<<"Respawn: "<<hero->nick<<endl;
 			}
 		}
 	}

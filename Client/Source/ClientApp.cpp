@@ -32,6 +32,21 @@ void ClientApp::onCreate(){
 
 /// Game events
 void ClientApp::onEvent(Event &event){
+
+	if(event.type == Event::MouseButtonPressed){
+		if(event.mouseButton.button == Mouse::Right){
+			
+
+			Vec2f mouse = getWindow().convertCoords(Vec2i(event.mouseButton.x, event.mouseButton.y) , m_view);
+
+			Packet pck;
+			pck << (Uint32)Client::DROP_BOMB;
+			pck << mouse;
+			m_client.send(pck);
+		}
+	}
+
+
 	if(event.type == Event::KeyPressed){
 		if(event.key.code == Keyboard::D){
 			if(m_myHero){
@@ -134,9 +149,8 @@ void ClientApp::onEvent(Event &event){
 void ClientApp::onRender(){
 	m_renderer->clearBuffers();
 
-	View v;
-	v.setRect(0,0,2000,1700);
-	m_renderer->setView(v);
+	m_view.setRect(0,0,2000,1700);
+	m_renderer->setView(m_view);
 
 	for(unsigned int i = 0; i < m_heroList.size(); i++){
 		if(m_heroList[i] == m_myHero)
@@ -146,7 +160,7 @@ void ClientApp::onRender(){
 
 		Text t;
 		t.setPosition(m_heroList[i]->position);
-		t.setString(m_heroList[i]->nick  + "[" + String::number(m_heroList[i]->health / m_heroList[i]->maxHealth * 100) + "]");
+		t.setString(m_heroList[i]->nick  + "[" + String::number(m_heroList[i]->health / m_heroList[i]->maxHealth * 100) + "]\nKills: " + String::number(m_heroList[i]->kills) + "   Deaths: " + String::number(m_heroList[i]->deaths));
 		m_renderer->draw(t);
 	}
 
@@ -225,6 +239,26 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 					}
 				}
 			}break;
+		case Server::HERO_DAMAGE:
+			{
+				Int16 id, damage;
+				pck >> id >> damage;
+
+				Hero* hero = getHeroById(id);
+				if(hero){
+					hero->health -= damage;
+				}
+			}break;
+		case Server::HERO_RECOVER:
+			{
+				Int16 id, damage;
+				pck >> id >> damage;
+
+				Hero* hero = getHeroById(id);
+				if(hero){
+					hero->health += damage;
+				}
+			}break;
 		case Server::HERO_DIRECTION_UPDATE:
 			{
 				Int16 id;
@@ -240,4 +274,12 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 				cout<<"Update"<<endl;
 			}break;
 	}
+};
+
+/// Find a hero by its id
+Hero* ClientApp::getHeroById(int id){
+	for(unsigned int i = 0; i < m_heroList.size(); i++){
+		if(m_heroList[i]->id == id)return m_heroList[i];
+	}
+	return NULL;
 };

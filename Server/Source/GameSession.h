@@ -4,6 +4,7 @@
 #include <ParabolaCore/Strings.h>
 #include <ParabolaCore/NetworkServer.h>
 #include <ParabolaCore/Clock.h>
+#include <ParabolaCore/Math.h>
 #include <ParabolaCore/Vectors.h>
 using namespace pE;
 #include <vector>
@@ -15,19 +16,18 @@ namespace Client{
 	enum ClientGeneratedPacket{
 		AUTH_REQUEST = 0,
 		TEST,
-		HERO_DIRECTION_REQUEST,
-
-		ADMIN_REQUEST
+		DROP_BOMB,
+		HERO_DIRECTION_REQUEST
 	};
 }
-
 namespace Server{
 	enum ServerGeneratedPacket{
 		AUTH_SUCESSFULL = 0,
 		HERO_INFO,
 		HERO_IDENTITY,
-		HERO_DIRECTION_UPDATE
-
+		HERO_DIRECTION_UPDATE,
+		HERO_DAMAGE,
+		HERO_RECOVER
 	};
 };
 
