@@ -6,14 +6,13 @@ using namespace std;
 
 /// Called to update AI
 void HeroIntelligenceController::onThink(){
-	cout<< hero->nick << " is thinking."<<endl;
 
-	/*if(hero->position.x < 300){
-		hero->moveDirection.x = 1;
+	const char* strs[] = {"Nothing happens around here..", "Im bored..", "Im so sick of you.", "Why don't you stop bothering me?", "Hello, let me sing you the song of my people", "Have you accepted Jesus Christ as your lord and savior?"};
+
+	if(c.getElapsedTime().asSeconds() > hero->nick.size()){
+		say(strs[Math::randomInt(0,5)]);
+		c.reset();
 	}
-	if(hero->position.x > 1000){
-		hero->moveDirection.x = -1;
-	}*/
 	
 	Hero* h;
 	if(hero->teamid == 1)
@@ -21,18 +20,27 @@ void HeroIntelligenceController::onThink(){
 	else
 		h = session->findPlayerByNickname("Liryea");
 	if(h){
-		if(h->position.x > hero->position.x){
-			hero->moveDirection.x = 1;
+		if(Math::distance(h->position, hero->position) < 100){
+			if(hero->moveDirection != Vec2f(0,0))
+				say("Caught you");
+
+			hero->moveDirection = Vec2f(0,0);
+			
 		}
-		if(h->position.x < hero->position.x){
-			hero->moveDirection.x = -1;
-		}
-		if(h->position.y > hero->position.y){
-			hero->moveDirection.y = 1;
-		}
-		if(h->position.y < hero->position.y){
-			hero->moveDirection.y = -1;
-		}
+		else{
+			if(h->position.x > hero->position.x){
+				hero->moveDirection.x = 1;
+			}
+			if(h->position.x < hero->position.x){
+				hero->moveDirection.x = -1;
+			}
+			if(h->position.y > hero->position.y){
+				hero->moveDirection.y = 1;
+			}
+			if(h->position.y < hero->position.y){
+				hero->moveDirection.y = -1;
+			}
+		}		
 	}
 
 	informDirectionUpdate();

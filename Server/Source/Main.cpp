@@ -18,7 +18,7 @@ int main(int argc, char **argv){
 	grimshaw.nick = "Grimshaw";
 	grimshaw.maxHealth = 2000;
 	grimshaw.healthRegen = 50;
-	grimshaw.movementSpeed = 500;
+	grimshaw.movementSpeed = 800;
 	game.addHeroTeam1(grimshaw);
 
 	Hero toto;
@@ -31,6 +31,7 @@ int main(int argc, char **argv){
 	liryea.maxHealth = 200;
 	liryea.healthRegen = 3;
 	liryea.respawnTime = 20;
+	liryea.movementSpeed = 300;
 	game.addHeroTeam2(liryea);
 
 	Hero toto2;
@@ -39,12 +40,16 @@ int main(int argc, char **argv){
 
 	//bind ai
 	Hero* h = game.findPlayerByNickname("Mr. Chuckles");
-	if(h)
+	if(h){
 		game.m_heroControllers[h] = new HeroIntelligenceController(h, &game);
+		game.m_aiControllers.push_back((HeroIntelligenceController*)game.m_heroControllers[h]);
+	}
 
 	Hero* h2 = game.findPlayerByNickname("Liryea's Slave");
-	if(h2)
+	if(h2){
 		game.m_heroControllers[h2] = new HeroIntelligenceController(h2, &game);
+		game.m_aiControllers.push_back((HeroIntelligenceController*)game.m_heroControllers[h2]);
+	}
 
 	game.start();
 

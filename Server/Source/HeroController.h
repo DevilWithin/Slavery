@@ -20,6 +20,9 @@ public:
 	/// Acknowledges a direction update
 	void informDirectionUpdate();
 
+	/// Says something in the global chat
+	void say(String message);
+
 	virtual void onThink(){}
 
 	Hero* hero;

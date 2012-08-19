@@ -96,7 +96,7 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 				m_server.send(pck);
 
 				cout<< ((HeroController*)peer->getUserData())->hero->nick <<" said: "<<message<<endl;
-			}		
+			}
 
 		}break;
 	case Client::DROP_BOMB:

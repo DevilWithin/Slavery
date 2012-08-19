@@ -109,6 +109,7 @@ public:
 	/// Each Hero must have a controller, AI or Network, otherwise it is just a dummy
 	std::map<Hero*, HeroController*> m_heroControllers;
 	std::vector<HeroNetworkController*> m_networkControllers;
+	std::vector<HeroIntelligenceController*> m_aiControllers;
 	int m_networkedControllers;
 
 	Int64 m_idCounter;
