@@ -16,6 +16,7 @@
     <ClCompile Include="..\..\Source\HeroController.cpp" />
     <ClCompile Include="..\..\Source\HeroIntelligenceController.cpp" />
     <ClCompile Include="..\..\Source\HeroNetworkController.cpp" />
+    <ClCompile Include="..\..\Source\ItemShopInventory.cpp" />
     <ClCompile Include="..\..\Source\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +25,8 @@
     <ClInclude Include="..\..\Source\HeroController.h" />
     <ClInclude Include="..\..\Source\HeroIntelligenceController.h" />
     <ClInclude Include="..\..\Source\HeroNetworkController.h" />
+    <ClInclude Include="..\..\Source\ItemInformation.h" />
+    <ClInclude Include="..\..\Source\ItemShopInventory.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{247CB820-E2BB-4E99-B656-4EE9277628EC}</ProjectGuid>

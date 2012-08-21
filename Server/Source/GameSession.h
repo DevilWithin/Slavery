@@ -32,7 +32,8 @@ namespace Server{
 		HERO_DAMAGE,
 		HERO_RECOVER,
 		HERO_RESPAWN,
-		HERO_DEATH
+		HERO_DEATH,
+		HERO_GOLD_BONUS
 	};
 };
 

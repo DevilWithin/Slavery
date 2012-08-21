@@ -7,6 +7,7 @@
 #include <ParabolaCore/ScopedFile.h>
 #include <ParabolaCore/TextStream.h>
 #include <ParabolaCore/Text.h>
+#include <ParabolaCore/Math.h>
 #include <ParabolaCore/RocketContext.h>
 #include <ParabolaCore/RocketUIVerticalScroller.h>
 #include <Rocket/Controls.h>
@@ -35,7 +36,8 @@ namespace Server{
 		HERO_DAMAGE,
 		HERO_RECOVER,
 		HERO_RESPAWN,
-		HERO_DEATH
+		HERO_DEATH,
+		HERO_GOLD_BONUS
 	};
 };
 
@@ -79,6 +81,8 @@ public:
 	/// Heros in the game
 	std::vector<Hero*> m_heroList;
 	Hero* m_myHero;
+
+	float secondClock;
 
 	/// Rendering
 	RocketContext* m_ui;

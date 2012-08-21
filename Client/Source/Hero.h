@@ -23,6 +23,9 @@ public:
 
 	/// Current position of the hero
 	Vec2f position;
+	/// Position we re moving to
+	Vec2f targetPosition;
+	bool autoMoving;
 
 	/// Nickname of the hero
 	String nick;
@@ -30,6 +33,9 @@ public:
 	/// Number of kills
 	int kills;
 	int deaths;
+
+	/// Gold amount
+	int gold;
 
 	Vec2f direction;
 	float movementSpeed;

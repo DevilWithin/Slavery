@@ -1,0 +1,103 @@
+<rml>
+
+<head>
+
+<style>
+
+body
+{
+	font-family: Droid Sans Fallback;
+	color: white;
+	font-size: 40;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+}
+
+div#shop
+{
+	width: 720px;;
+	height: 500px;
+	background-color: black;
+	display: block;
+}
+
+input
+{
+	background-color: rgba(30,30,30,200);
+	color: white;
+}
+
+entry
+{
+	
+	float: left;
+	width: 100px;
+	height: 100px;
+	background-color: red;
+	display: inline-block;	
+	margin: 1px;
+}
+
+entry:hover
+{
+	background-color: black;
+}
+
+div#container
+{
+	display: block;
+	width: 100%;
+}
+
+div#chat_window
+{
+	font-size: 14;
+	display: block;
+	width: 400px;
+	background-color: rgba(200,200,200,255);
+	overflow: hidden;
+}
+
+.scrollable
+{
+	height: 150px;
+	background-color: rgba(0,10,20,40);
+}
+
+button
+{	
+	background-color: rgba(10,10,10,100);
+	text-align: center;
+}
+
+button:hover
+{
+	background-color: rgba(200,100,10,160);
+}
+
+button:active
+{
+	background-color: rgba(0,0,0,100);
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="shop">
+<handle move_target="#document">
+<div style="width: 100%;display: block;background-color: green;text-align: center;">Shop</div></handle>
+
+<div style="padding: 5px;">
+
+<entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry><entry></entry>
+<entry></entry><entry></entry><entry></entry><entry></entry>
+
+</div>
+
+</div>
+
+</body>
+</rml>

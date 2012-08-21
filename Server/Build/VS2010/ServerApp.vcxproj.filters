@@ -25,6 +25,9 @@
     <ClCompile Include="..\..\Source\HeroIntelligenceController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ItemShopInventory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\GameSession.h">
@@ -40,6 +43,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\HeroIntelligenceController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ItemShopInventory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ItemInformation.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

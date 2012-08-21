@@ -18,6 +18,8 @@ void ClientApp::onCreate(){
 	m_renderer = Renderer::createAutomaticRenderer(&getWindow());
 	m_view.setRect(0,0,1024,768);
 
+	secondClock = 0.f;
+
 	dirt.loadFromFile("dirt.png");
 
 	m_ui = RocketContext::create("ui", Vec2i(1024,768));
@@ -25,6 +27,7 @@ void ClientApp::onCreate(){
 	m_ui->onEvent.connect(MAKE_SLOT_LOCAL(ClientApp, rocketEvent));
 	m_ui->loadFont("DroidSansFallback.ttf");
 	m_chat = m_ui->showDocument("chat.ui");
+	m_ui->showDocument("hud.ui");
 
 	String account_name = "127.0.0.1";
 	ScopedFile fp("../../ip.txt", IODevice::TextRead);
@@ -49,6 +52,9 @@ void ClientApp::rocketEvent(String event){
 		pck << message;
 		m_client.send(pck);
 	}
+	else if(event == "hud.shop"){
+		m_ui->showDocument("shop.ui");
+	}
 };
 
 /// Game events
@@ -56,7 +62,7 @@ void ClientApp::onEvent(Event &event){
 	m_ui->processEvent(event);
 
 	if(event.type == Event::MouseButtonPressed){
-		if(event.mouseButton.button == Mouse::Right){
+		if(event.mouseButton.button == Mouse::Left){
 			
 
 			Vec2f mouse = getWindow().convertCoords(Vec2i(event.mouseButton.x, event.mouseButton.y) , m_view);
@@ -65,6 +71,23 @@ void ClientApp::onEvent(Event &event){
 			pck << (Uint32)Client::DROP_BOMB;
 			pck << mouse;
 			m_client.send(pck);
+		}
+		if(event.mouseButton.button == Mouse::Right){
+			Vec2f mouse = getWindow().convertCoords(Vec2i(event.mouseButton.x, event.mouseButton.y) , m_view);
+
+			if(m_myHero){
+				m_myHero->targetPosition = mouse;
+				m_myHero->autoMoving = true;
+			}
+		}
+	}
+	if(event.type == Event::MouseWheelMoved){
+
+		if(event.mouseWheel.delta > 0){
+			m_view.zoom(0.9f);
+		}
+		else if(event.mouseWheel.delta <= 0){
+			m_view.zoom(1.1f);
 		}
 	}
 
@@ -209,22 +232,62 @@ void ClientApp::onRender(){
 	m_renderer->setView(v);
 	m_renderer->drawRocketContext(m_ui);
 
+	if(m_myHero){
+		Text t;
+		t.setString("Gold: " + String::number(m_myHero->gold));
+		m_renderer->draw(t);
+	}
+
 	m_renderer->display();
 };
 
 /// Updating the game
 void ClientApp::onUpdate(Time time){
-	m_client.update(10);
+	m_client.update(1);
 	m_ui->update();
 
+	secondClock += time.asSeconds();
+
 	for(unsigned int i = 0; i < m_heroList.size(); i++){
-		m_heroList[i]->position += m_heroList[i]->direction * m_heroList[i]->movementSpeed * time.asSeconds();
+		if(!m_heroList[i]->dead){
+
+			if(m_heroList[i]->autoMoving){
+				// interpolate to target
+				
+
+				float angle = Math::computeAngle( m_heroList[i]->position, m_heroList[i]->targetPosition);
+				Vec2f dir(cos(angle), sin(angle));
+				m_heroList[i]->position += dir * m_heroList[i]->movementSpeed * time.asSeconds();
+
+				if(Math::distance(m_heroList[i]->position, m_heroList[i]->targetPosition) <= m_heroList[i]->movementSpeed * time.asSeconds() ){
+					m_heroList[i]->autoMoving = false;
+					m_heroList[i]->direction = Vec2f(0,0);
+					m_heroList[i]->position = m_heroList[i]->targetPosition;
+				}
+
+			}
+			else{
+				m_heroList[i]->position += m_heroList[i]->direction * m_heroList[i]->movementSpeed * time.asSeconds();
+
+			}
+
+		}
 
 		if(m_heroList[i] == m_myHero)
 			m_view.setCenter(m_heroList[i]->position);
 
 		if(m_heroList[i]->dead)
 			m_heroList[i]->respawnTimeLeft -= time.asSeconds();
+	}
+
+	if(secondClock > 1.f){
+		//Update second
+
+		for(unsigned int i = 0; i < m_heroList.size(); i++){
+			m_heroList[i]->gold += 1;
+		}
+
+		secondClock = 0.f;
 	}
 };
 
@@ -318,8 +381,8 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 			}break;
 		case Server::HERO_DEATH:
 			{
-				Int16 id, source, respawn;
-				pck >> id >> respawn >> source;
+				Int16 id, source, respawn, gold;
+				pck >> id >> respawn >> gold >> source;
 
 				Hero* hero = getHeroById(id);
 				if(hero){
@@ -332,6 +395,7 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 					if(killer){
 						killer->kills ++;
 						cout<<killer->nick << " has killed "<<hero->nick<<"!"<<endl;
+						killer->gold += gold;
 					}
 				}
 			}break;

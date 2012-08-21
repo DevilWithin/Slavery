@@ -123,6 +123,7 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 						pck2 << (Uint32)Server::HERO_DEATH;
 						pck2 << (Int16)getHero(i)->id; // Who died
 						pck2 << (Int16)getHero(i)->respawnTime; //How long it will take
+						pck2 << (Int16)233;
 						pck2 << (Int16)sourceId; // Who killed
 						m_server.send(pck2);
 					}
@@ -189,10 +190,12 @@ void GameSession::update(){
 
 			// Movement updates
 			for(unsigned int i = 0; i < m_team1.size(); i++){
-				m_team1[i].position += m_team1[i].moveDirection * updateStep * m_team1[i].movementSpeed;
+				if(!m_team1[i].dead)
+					m_team1[i].position += m_team1[i].moveDirection * updateStep * m_team1[i].movementSpeed;
 			}
 			for(unsigned int i = 0; i < m_team2.size(); i++){
-				m_team2[i].position += m_team2[i].moveDirection * updateStep * m_team2[i].movementSpeed;
+				if(!m_team2[i].dead)
+					m_team2[i].position += m_team2[i].moveDirection * updateStep * m_team2[i].movementSpeed;
 			}
 
 			gatheredTime -= updateStep;
@@ -304,6 +307,7 @@ void GameSession::logPlayer(String name){
 void GameSession::updateSecondly(){
 	for(unsigned int i = 0; i < playerCount(); i++){
 		Hero* hero = getHero(i);
+		hero->gold += 1;
 
 		if(!hero->dead){
 			Int16 regen = hero->healthRegen;
