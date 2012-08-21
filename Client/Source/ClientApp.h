@@ -11,6 +11,7 @@
 #include <ParabolaCore/RocketContext.h>
 #include <ParabolaCore/RocketUIVerticalScroller.h>
 #include <Rocket/Controls.h>
+#include <ParabolaCore/ParticleSystem.h>
 
 using namespace pE;
 
@@ -23,6 +24,7 @@ namespace Client{
 		TEST,
 		DROP_BOMB,
 		HERO_DIRECTION_REQUEST,
+		HERO_TRAVEL_POSITION,
 		CHAT_MESSAGE
 	};
 }
@@ -33,6 +35,7 @@ namespace Server{
 		HERO_INFO,
 		HERO_IDENTITY,
 		HERO_DIRECTION_UPDATE,
+		HERO_TRAVEL_UPDATE,
 		HERO_DAMAGE,
 		HERO_RECOVER,
 		HERO_RESPAWN,

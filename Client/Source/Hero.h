@@ -10,6 +10,9 @@ public:
 	/// Startup the hero
 	Hero();
 
+	/// Calculates the normalized direction
+	void calculateAngleDirection();
+
 	/// The unique identifier of the hero being controlled
 	Int16 id;
 	Int16 teamid;
@@ -38,6 +41,7 @@ public:
 	int gold;
 
 	Vec2f direction;
+	Vec2f angleDirection;
 	float movementSpeed;
 };
 

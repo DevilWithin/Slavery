@@ -43,6 +43,8 @@ public:
 	Vec2f position;
 	Vec2f moveDirection;
 	float movementSpeed;
+	Vec2f targetPosition;
+	bool autoMoving;
 
 };
 

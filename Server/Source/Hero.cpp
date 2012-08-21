@@ -13,6 +13,7 @@ Hero::Hero(){
 	spawnPoint = Vec2f(300,300);
 	respawnTime = 5.f;
 	timeSinceDeath = 0.f;
+	autoMoving = false;
 };
 
 /// Damage the hero

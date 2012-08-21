@@ -78,6 +78,12 @@ void ClientApp::onEvent(Event &event){
 			if(m_myHero){
 				m_myHero->targetPosition = mouse;
 				m_myHero->autoMoving = true;
+
+				Packet p;
+				p << (Uint32)Client::HERO_TRAVEL_POSITION;
+				p << m_myHero->id;
+				p << m_myHero->targetPosition;
+				m_client.send(p);
 			}
 		}
 	}
@@ -95,7 +101,9 @@ void ClientApp::onEvent(Event &event){
 	if(event.type == Event::KeyPressed){
 		if(event.key.code == Keyboard::D){
 			if(m_myHero){
+
 				m_myHero->direction.x = 1;
+				
 
 				Packet p;
 				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
@@ -109,6 +117,7 @@ void ClientApp::onEvent(Event &event){
 			if(m_myHero){
 				m_myHero->direction.x = -1;
 
+
 				Packet p;
 				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
 				p << m_myHero->id;
@@ -121,6 +130,7 @@ void ClientApp::onEvent(Event &event){
 			if(m_myHero){
 				m_myHero->direction.y = -1;
 
+
 				Packet p;
 				p << (Uint32)Client::HERO_DIRECTION_REQUEST;
 				p << m_myHero->id;
@@ -131,6 +141,7 @@ void ClientApp::onEvent(Event &event){
 		}
 		if(event.key.code == Keyboard::S){
 			if(m_myHero){
+				
 				m_myHero->direction.y = 1;
 
 				Packet p;
@@ -143,7 +154,7 @@ void ClientApp::onEvent(Event &event){
 		}
 	}
 	else if(event.type == Event::KeyReleased){
-		if(event.key.code == Keyboard::D){			
+		if(event.key.code == Keyboard::D){	
 			if(m_myHero){
 				m_myHero->direction.x = 0;
 
@@ -237,6 +248,10 @@ void ClientApp::onRender(){
 		t.setString("Gold: " + String::number(m_myHero->gold));
 		m_renderer->draw(t);
 	}
+
+	/*ParticleSystem p;
+	p.createSampleSparkles("");
+	m_renderer->draw(p);*/
 
 	m_renderer->display();
 };
@@ -418,10 +433,26 @@ void ClientApp::onClientData(NetworkClient* , NetworkPacket* packet){
 					if(m_heroList[i]->id == id){
 						//found our hero
 						pck >> m_heroList[i]->direction;
+						m_heroList[i]->autoMoving = false;
 					}
 				}
 
 				
+			}break;
+		case Server::HERO_TRAVEL_UPDATE:
+			{
+				Int16 id;
+				pck >> id;
+
+				for(unsigned int i = 0; i < m_heroList.size(); i++){
+					if(m_heroList[i]->id == id){
+						//found our hero
+						pck >> m_heroList[i]->targetPosition;
+						m_heroList[i]->autoMoving = true;
+					}
+				}
+
+
 			}break;
 		case Server::GLOBAL_CHAT_MESSAGE:
 			{

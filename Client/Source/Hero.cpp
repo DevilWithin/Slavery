@@ -11,3 +11,8 @@ Hero::Hero(){
 	gold = 0;
 	autoMoving = false;
 };
+
+/// Calculates the normalized direction
+void Hero::calculateAngleDirection(){
+
+};

@@ -20,6 +20,11 @@ public:
 	/// Acknowledges a direction update
 	void informDirectionUpdate();
 
+
+	/// Starts travelling to a position
+	void informTravelPosition(Vec2f position);
+
+
 	/// Says something in the global chat
 	void say(String message);
 

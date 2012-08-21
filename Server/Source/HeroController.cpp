@@ -18,6 +18,20 @@ void HeroController::informDirectionUpdate(){
 		session->m_server.send(pck2);
 	}
 };
+/// Starts travelling to a position
+void HeroController::informTravelPosition(Vec2f position){
+	//tell the others 
+	Packet pck2;
+	pck2 << (Uint32)Server::HERO_TRAVEL_UPDATE;
+	pck2 << (Int16)hero->id;
+	pck2 << position;
+
+	for(int i = 0; i < session->m_networkControllers.size(); i++){
+		HeroNetworkController* controller = session->m_networkControllers[i];
+		session->m_server.send(pck2);
+	}
+};
+
 
 /// Says something in the global chat
 void HeroController::say(String message){

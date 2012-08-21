@@ -25,26 +25,14 @@ void HeroIntelligenceController::onThink(){
 				say("Caught you");
 
 			hero->moveDirection = Vec2f(0,0);
+			informDirectionUpdate();
 			
 		}
 		else{
-			if(h->position.x > hero->position.x){
-				hero->moveDirection.x = 1;
-			}
-			if(h->position.x < hero->position.x){
-				hero->moveDirection.x = -1;
-			}
-			if(h->position.y > hero->position.y){
-				hero->moveDirection.y = 1;
-			}
-			if(h->position.y < hero->position.y){
-				hero->moveDirection.y = -1;
-			}
+			hero->autoMoving = true;
+			hero->targetPosition = h->position;
+			informTravelPosition(h->position);			
 		}		
 	}
-
-	informDirectionUpdate();
-
-	
 
 };

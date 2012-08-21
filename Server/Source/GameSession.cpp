@@ -154,6 +154,29 @@ void GameSession::clientData(NetworkServerPeer* peer, NetworkPacket* packet){
 
 		}break;
 
+	case Client::HERO_TRAVEL_POSITION:
+		{
+			Int16 id;
+			p >> id;
+			Hero* hero = findPlayerById(id);
+			if(hero){
+				// update
+				p >> hero->targetPosition;
+				hero->autoMoving = true;
+
+				//tell the others
+				Packet pck2;
+				pck2 << (Uint32)Server::HERO_TRAVEL_UPDATE;
+				pck2 << (Int16)hero->id;
+				pck2 << hero->targetPosition;
+
+				for(int i = 0; i < m_networkControllers.size(); i++){
+					HeroNetworkController* controller = m_networkControllers[i];
+					controller->peer->send(pck2);
+				}
+			}
+		}break;
+
 	}
 
 	//cout<<"DATA: "<<p.getDataSize()<<endl;
@@ -189,13 +212,24 @@ void GameSession::update(){
 		while(gatheredTime >= updateStep){
 
 			// Movement updates
-			for(unsigned int i = 0; i < m_team1.size(); i++){
-				if(!m_team1[i].dead)
-					m_team1[i].position += m_team1[i].moveDirection * updateStep * m_team1[i].movementSpeed;
-			}
-			for(unsigned int i = 0; i < m_team2.size(); i++){
-				if(!m_team2[i].dead)
-					m_team2[i].position += m_team2[i].moveDirection * updateStep * m_team2[i].movementSpeed;
+			for(int i = 0; i < playerCount(); i++){
+				Hero* h = getHero(i);
+
+				if(h->autoMoving){
+					// interpolate to target
+					float angle = Math::computeAngle( h->position, h->targetPosition);
+					Vec2f dir(cos(angle), sin(angle));
+					h->position += dir * h->movementSpeed * updateStep;
+
+					if(Math::distance(h->position, h->targetPosition) <= h->movementSpeed * updateStep ){
+						h->autoMoving = false;
+						h->moveDirection = Vec2f(0,0);
+						h->position = h->targetPosition;
+					}
+				}
+				else{
+					h->position += h->moveDirection * h->movementSpeed * updateStep;
+				}
 			}
 
 			gatheredTime -= updateStep;
